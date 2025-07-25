@@ -1,0 +1,43 @@
+
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ติดตามผู้ไร้บ้าน</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    #preview {
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    input, button {
+      margin: 5px;
+      padding: 10px;
+      width: 90%;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <h2>บันทึกข้อมูลบุคคลในที่สาธารณะ</h2>
+
+  <video id="camera" autoplay playsinline width="300"></video><br/>
+  <button onclick="capturePhoto()">📸 ถ่ายภาพ</button><br/>
+  <canvas id="preview" style="display: none;"></canvas>
+
+  <input type="text" id="name" placeholder="ชื่อ / ชื่อเล่น (ถ้ามี)" /><br/>
+  <input type="text" id="note" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)" /><br/>
+  <input type="text" id="location" readonly placeholder="พิกัด GPS" /><br/>
+  <button onclick="submitData()">✅ บันทึกข้อมูล</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
