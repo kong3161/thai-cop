@@ -1,21 +1,36 @@
-
-
 const video = document.getElementById("camera");
 const canvas = document.getElementById("preview");
 const locationInput = document.getElementById("location");
 
 let latitude = "";
 let longitude = "";
+let currentStream = null;
+let currentFacingMode = "environment";
 
-// เปิดกล้อง
-navigator.mediaDevices
-  .getUserMedia({ video: true })
-  .then((stream) => {
-    video.srcObject = stream;
-  })
-  .catch((err) => {
-    alert("ไม่สามารถเข้าถึงกล้องได้: " + err.message);
-  });
+// เปิดกล้องตามทิศทางที่กำหนด
+function startCamera() {
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+  }
+
+  navigator.mediaDevices
+    .getUserMedia({
+      video: { facingMode: { exact: currentFacingMode } }
+    })
+    .then((stream) => {
+      currentStream = stream;
+      video.srcObject = stream;
+    })
+    .catch((err) => {
+      alert("ไม่สามารถเข้าถึงกล้องได้: " + err.message);
+    });
+}
+
+// สลับกล้อง
+function switchCamera() {
+  currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+  startCamera();
+}
 
 // ดึงตำแหน่ง GPS
 if ("geolocation" in navigator) {
@@ -56,3 +71,6 @@ function submitData() {
 
   alert("📍 บันทึกข้อมูลเรียบร้อย (จำลอง)");
 }
+
+// เริ่มต้นเปิดกล้อง
+startCamera();
