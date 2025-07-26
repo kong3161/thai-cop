@@ -60,14 +60,8 @@ function capturePhoto() {
 }
 
 async function uploadToCloudinary(imageDataUrl) {
-  // เพิ่ม data:image/jpeg;base64 หากยังไม่มี
-  let dataUrl = imageDataUrl;
-  if (!dataUrl.startsWith("data:image/jpeg;base64,")) {
-    dataUrl = "data:image/jpeg;base64," + dataUrl;
-  }
-  // ส่ง base64 ไปยัง Cloudinary
   const formData = new FormData();
-  formData.append("file", dataUrl);
+  formData.append("file", imageDataUrl.split(",")[1]); // Strip the base64 prefix
   formData.append("upload_preset", "unsigned_preset");
 
   const res = await fetch("https://api.cloudinary.com/v1_1/policelostcar/image/upload", {
