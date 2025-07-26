@@ -59,55 +59,70 @@ function capturePhoto() {
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 }
 
-function submitData() {
+async function uploadToCloudinary(imageDataUrl) {
+  const formData = new FormData();
+  formData.append("file", imageDataUrl);
+  formData.append("upload_preset", "unsigned_preset");
+
+  const res = await fetch("https://api.cloudinary.com/v1_1/policelostcar/image/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+  return data.secure_url;
+}
+
+async function submitData() {
   const name = document.getElementById("name").value;
   const note = document.getElementById("note").value;
   const gender = document.getElementById("gender").value;
   const approxAge = document.getElementById("approx_age").value;
   const appearance = document.getElementById("appearance").value;
   const condition = document.getElementById("condition").value;
-  const imageData = canvas.toDataURL("image/jpeg");
   const timestamp = new Date().toISOString();
 
-  if (!latitude || !longitude || !imageData) {
+  if (!latitude || !longitude) {
     alert("ข้อมูลไม่ครบ กรุณาลองใหม่");
     return;
   }
 
-  // ส่งข้อมูลเข้า Supabase
-  fetch("https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
-      "Prefer": "return=representation"
-    },
-    body: JSON.stringify({
-      name,
-      note,
-      gender,
-      approx_age: parseInt(approxAge),
-      appearance,
-      condition,
-      latitude,
-      longitude,
-      timestamp,
-      image: imageData
-    })
-  })
-  .then(response => {
+  const imageData = canvas.toDataURL("image/jpeg");
+
+  try {
+    const imageUrl = await uploadToCloudinary(imageData);
+
+    const response = await fetch("https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify({
+        name,
+        note,
+        gender,
+        approx_age: parseInt(approxAge),
+        appearance,
+        condition,
+        latitude,
+        longitude,
+        timestamp,
+        image: imageUrl
+      })
+    });
+
     if (!response.ok) throw new Error("ไม่สามารถบันทึกข้อมูลได้");
-    return response.json();
-  })
-  .then(data => {
+    const data = await response.json();
     alert("📍 บันทึกข้อมูลเรียบร้อย");
     console.log("บันทึกสำเร็จ:", data);
-  })
-  .catch(error => {
+
+  } catch (error) {
     alert("เกิดข้อผิดพลาด: " + error.message);
     console.error(error);
-  });
+  }
 }
 
 // เริ่มต้นเปิดกล้อง
