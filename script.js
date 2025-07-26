@@ -54,8 +54,10 @@ if ("geolocation" in navigator) {
 function capturePhoto() {
   canvas.style.display = "block";
   const context = canvas.getContext("2d");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  const maxWidth = 960;
+  const maxHeight = (maxWidth * 3) / 4;
+  canvas.width = maxWidth;
+  canvas.height = maxHeight;
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 }
 
