@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -27,24 +25,50 @@
       margin: 1rem;
       border: 2px solid #ccc;
     }
-    .card {
+    /* .card {
       background: white;
-      margin: 1rem auto;
+      margin: 0;
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      max-width: 600px;
-    }
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 0;
+    } */
     img {
       max-width: 100%;
       border-radius: 8px;
+      display: block;
     }
+
+/* #records {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+} */
   </style>
 </head>
 <body>
   <h1>ข้อมูลที่เคยบันทึก</h1>
   <div id="map"></div>
-  <div id="records"></div>
+  <div id="records-container">
+    <table id="records" style="width: 100%; border-collapse: collapse; background: white; margin: 1rem auto; border: 1px solid #ccc; text-align: center;">
+      <thead>
+        <tr>
+          <th style="padding: 0.5rem; border: 1px solid #ccc;">ชื่อ</th>
+          <th style="padding: 0.5rem; border: 1px solid #ccc;">วันเวลา</th>
+          <th style="padding: 0.5rem; border: 1px solid #ccc;">รายละเอียด</th>
+          <th style="padding: 0.5rem; border: 1px solid #ccc;">ละติจูด</th>
+          <th style="padding: 0.5rem; border: 1px solid #ccc;">ลองจิจูด</th>
+          <th style="padding: 0.5rem; border: 1px solid #ccc;">รูปภาพ</th>
+        </tr>
+      </thead>
+      <tbody id="records-body"></tbody>
+    </table>
+  </div>
 
   <div style="text-align: center; margin: 2rem;">
     <a href="index.html" style="display: inline-block; background-color: #2196F3; color: white; padding: 1rem 2rem; font-size: 1.2rem; border-radius: 12px; text-decoration: none;">
@@ -82,18 +106,21 @@
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      const container = document.getElementById("records");
+      const tbody = document.getElementById("records-body");
       data.forEach((report) => {
         const { name, note, latitude, longitude, image, timestamp } = report;
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <strong>${name}</strong><br/>
-          <em>${formatThaiDateTime(timestamp)}</em><br/>
-          <p>${note}</p>
-          ${image ? `<img src="${image}" />` : ""}
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${name}</td>
+          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${formatThaiDateTime(timestamp)}</td>
+          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${note}</td>
+          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${latitude || '-'}</td>
+          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${longitude || '-'}</td>
+          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc; vertical-align: middle;">
+            ${image ? `<div style="display: flex; flex-direction: column; align-items: center;"><img src="${image}" style="max-width: 80px; border-radius: 6px; margin-bottom: 4px;" /><a href="${image}" target="_blank">ดูภาพเต็ม</a></div>` : "—"}
+          </td>
         `;
-        container.appendChild(card);
+        tbody.appendChild(row);
 
         if (latitude && longitude && image) {
           const customIcon = L.divIcon({
