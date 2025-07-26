@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+  <style>
+  body {
+    background-color: #e9ecf0; /* สีเทาอ่อน */
+  }
+
+  .app-container {
+    background-color: #fff; /* กล่องขาว */
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+  }
+  </style>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer">
@@ -113,9 +127,12 @@
   </style>
 </head>
 <body>
-  <h2>บันทึกข้อมูลบุคคลในที่สาธารณะ</h2>
+  <div class="app-container">
+  <h2 style="text-align: center; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ระบบบันทึกสถานที่พบผู้ป่วยจิตเวชหรือคนไร้บ้านในที่สาธารณะ</h2>
 
-  <button onclick="startCamera()">เปิดกล้อง</button>
+  <div style="text-align: center;">
+    <button onclick="startCamera()">เปิดกล้อง</button>
+  </div>
   <video id="camera" autoplay playsinline muted></video><br/>
   <div class="button-group">
     <button class="capture-button" onclick="capturePhoto()">ถ่ายภาพ</button>
@@ -128,7 +145,12 @@
   <input type="text" id="location" readonly placeholder="พิกัด GPS" /><br/>
   <div id="map"></div>
   <div id="timestampDisplay" style="margin-bottom: 10px; font-size: 16px; font-weight: bold; color: #555;"></div>
-  <button onclick="submitData()">✅ บันทึกข้อมูล</button>
+  <div style="text-align: center;">
+    <button id="refresh-location" onclick="refreshLocation()">ขอตำแหน่งใหม่</button>
+  </div>
+  <div style="text-align: center;">
+    <button onclick="submitData()">✅ บันทึกข้อมูล</button>
+  </div>
 
   <script>
     const timestamp = new Date();
@@ -167,6 +189,6 @@
   </div>
 
   <script src="script.js"></script>
-  
+  </div>
 </body>
 </html>

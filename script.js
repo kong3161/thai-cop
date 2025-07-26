@@ -83,3 +83,29 @@ function submitData() {
 
 // เริ่มต้นเปิดกล้อง
 startCamera();
+
+// ขอพิกัดใหม่
+function requestNewLocation() {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+      locationInput.value = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+
+      // อัปเดตแผนที่
+      const map = L.map('map').setView([latitude, longitude], 16);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+      L.marker([latitude, longitude]).addTo(map);
+    }, () => {
+      locationInput.value = "ไม่สามารถระบุตำแหน่งได้";
+    });
+  }
+}
+
+// ผูกฟังก์ชันกับปุ่มรีเฟรชพิกัด
+const refreshBtn = document.getElementById("refresh-location");
+if (refreshBtn) {
+  refreshBtn.addEventListener("click", requestNewLocation);
+}
