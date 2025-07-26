@@ -59,21 +59,29 @@ function capturePhoto() {
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 }
 
-async function uploadToCloudinary(imageDataUrl) {
-  const formData = new FormData();
-  formData.append("file", imageDataUrl.split(",")[1]); // Strip the base64 prefix
-  formData.append("upload_preset", "unsigned_preset");
+async function uploadToCloudinary() {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append("file", blob);
+      formData.append("upload_preset", "unsigned_preset");
 
-  const res = await fetch("https://api.cloudinary.com/v1_1/policelostcar/image/upload", {
-    method: "POST",
-    body: formData
+      try {
+        const res = await fetch("https://api.cloudinary.com/v1_1/dibfdc1ft/image/upload", {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        if (!data.secure_url) {
+          reject(new Error("การอัปโหลดภาพไปยัง Cloudinary ล้มเหลว"));
+        } else {
+          resolve(data.secure_url);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    }, "image/jpeg");
   });
-
-  const data = await res.json();
-  if (!data.secure_url) {
-    throw new Error("การอัปโหลดภาพไปยัง Cloudinary ล้มเหลว");
-  }
-  return data.secure_url;
 }
 
 async function submitData() {
@@ -93,7 +101,7 @@ async function submitData() {
   const imageData = canvas.toDataURL("image/jpeg");
 
   try {
-    const imageUrl = await uploadToCloudinary(imageData);
+    const imageUrl = await uploadToCloudinary();
     console.log("Image URL:", imageUrl);
 
     const response = await fetch("https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports", {
