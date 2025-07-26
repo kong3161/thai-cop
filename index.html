@@ -4,9 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ติดตามผู้ไร้บ้าน</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: "Segoe UI", sans-serif;
+      font-family: "Anuphan", sans-serif;
       margin: 0;
       padding: 20px;
       background-color: #f5f7fa;
@@ -36,6 +37,21 @@
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 16px;
+      font-family: inherit;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 10px;
+    }
+
+    .button-group button {
+      flex: 1;
+      font-family: inherit;
     }
 
     button {
@@ -54,15 +70,31 @@
   <h2>บันทึกข้อมูลบุคคลในที่สาธารณะ</h2>
 
   <video id="camera" autoplay playsinline width="300"></video><br/>
-  <button onclick="capturePhoto()">📸 ถ่ายภาพ</button><br/>
-  <button onclick="switchCamera()">🔄 สลับกล้องหน้า/หลัง</button><br/>
+  <div class="button-group">
+    <button onclick="capturePhoto()">ถ่ายภาพ</button>
+    <button onclick="switchCamera()">สลับกล้อง</button>
+  </div>
   <canvas id="preview" style="display: none;"></canvas>
 
   <input type="text" id="name" placeholder="ชื่อ / ชื่อเล่น (ถ้ามี)" /><br/>
   <input type="text" id="note" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)" /><br/>
   <input type="text" id="location" readonly placeholder="พิกัด GPS" /><br/>
+  <div id="timestampDisplay" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
   <button onclick="submitData()">✅ บันทึกข้อมูล</button>
 
   <script src="script.js"></script>
+  <script>
+    const timestamp = new Date();
+    const options = { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false 
+    };
+    document.getElementById("timestampDisplay").textContent = "เวลาที่ระบบบันทึก: " + timestamp.toLocaleString('th-TH', options);
+  </script>
 </body>
 </html>

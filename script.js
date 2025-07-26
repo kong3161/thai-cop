@@ -57,6 +57,7 @@ function submitData() {
   const name = document.getElementById("name").value;
   const note = document.getElementById("note").value;
   const imageData = canvas.toDataURL("image/jpeg");
+  const timestamp = new Date().toISOString();
 
   if (!latitude || !longitude || !imageData) {
     alert("ข้อมูลไม่ครบ กรุณาลองใหม่");
@@ -67,6 +68,7 @@ function submitData() {
   console.log("ชื่อ:", name);
   console.log("รายละเอียด:", note);
   console.log("พิกัด:", latitude, longitude);
+  console.log("เวลา:", timestamp);
   console.log("ภาพ:", imageData.substring(0, 100) + "...");
 
   alert("📍 บันทึกข้อมูลเรียบร้อย (จำลอง)");
