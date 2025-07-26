@@ -60,8 +60,14 @@ function capturePhoto() {
 }
 
 async function uploadToCloudinary(imageDataUrl) {
+  // เพิ่ม data:image/jpeg;base64 หากยังไม่มี
+  let dataUrl = imageDataUrl;
+  if (!dataUrl.startsWith("data:image/jpeg;base64,")) {
+    dataUrl = "data:image/jpeg;base64," + dataUrl;
+  }
+  // ส่ง base64 ไปยัง Cloudinary
   const formData = new FormData();
-  formData.append("file", imageDataUrl);
+  formData.append("file", dataUrl);
   formData.append("upload_preset", "unsigned_preset");
 
   const res = await fetch("https://api.cloudinary.com/v1_1/policelostcar/image/upload", {
@@ -70,7 +76,9 @@ async function uploadToCloudinary(imageDataUrl) {
   });
 
   const data = await res.json();
-  console.log("Cloudinary response:", data);
+  if (!data.secure_url) {
+    throw new Error("การอัปโหลดภาพไปยัง Cloudinary ล้มเหลว");
+  }
   return data.secure_url;
 }
 
