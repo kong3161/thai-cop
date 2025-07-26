@@ -92,8 +92,8 @@ function submitData() {
 // เริ่มต้นเปิดกล้อง
 startCamera();
 
-// ขอพิกัดใหม่
-function requestNewLocation() {
+// ขอพิกัดและเวลาใหม่
+function refreshLocation() {
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition((position) => {
       latitude = position.coords.latitude;
@@ -110,10 +110,23 @@ function requestNewLocation() {
       locationInput.value = "ไม่สามารถระบุตำแหน่งได้";
     });
   }
+
+  // อัปเดต timestamp
+  const timestamp = new Date();
+  const options = { 
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false
+  };
+  const timestampElement = document.getElementById("timestampDisplay");
+  if (timestampElement) {
+    timestampElement.textContent =
+      "เวลาที่ระบบบันทึก: " + timestamp.toLocaleString('th-TH', options);
+  }
 }
 
 // ผูกฟังก์ชันกับปุ่มรีเฟรชพิกัด
 const refreshBtn = document.getElementById("refresh-location");
 if (refreshBtn) {
-  refreshBtn.addEventListener("click", requestNewLocation);
+  refreshBtn.addEventListener("click", refreshLocation);
 }
