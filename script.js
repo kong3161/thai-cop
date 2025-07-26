@@ -8,22 +8,24 @@ let currentStream = null;
 let currentFacingMode = "environment";
 
 // เปิดกล้องตามทิศทางที่กำหนด
-function startCamera() {
+async function startCamera() {
   if (currentStream) {
     currentStream.getTracks().forEach(track => track.stop());
   }
 
-  navigator.mediaDevices
-    .getUserMedia({
-      video: { facingMode: currentFacingMode }
-    })
-    .then((stream) => {
-      currentStream = stream;
-      video.srcObject = stream;
-    })
-    .catch((err) => {
-      alert("ไม่สามารถเข้าถึงกล้องได้: " + err.message);
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: currentFacingMode }
+      }
     });
+    currentStream = stream;
+    video.srcObject = stream;
+    video.play();
+  } catch (err) {
+    alert("ไม่สามารถเปิดกล้องได้: " + err.message);
+    console.error("Camera error:", err);
+  }
 }
 
 // สลับกล้อง
@@ -54,10 +56,8 @@ if ("geolocation" in navigator) {
 function capturePhoto() {
   canvas.style.display = "block";
   const context = canvas.getContext("2d");
-  const maxWidth = 960;
-  const maxHeight = (maxWidth * 3) / 4;
-  canvas.width = maxWidth;
-  canvas.height = maxHeight;
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 }
 
@@ -84,4 +84,7 @@ function submitData() {
 }
 
 // เริ่มต้นเปิดกล้อง
-startCamera();
+window.onload = () => {
+  console.log("🔧 เริ่มเปิดกล้อง...");
+  startCamera();
+};
