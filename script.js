@@ -15,7 +15,7 @@ function startCamera() {
 
   navigator.mediaDevices
     .getUserMedia({
-      video: { facingMode: { exact: currentFacingMode } }
+      video: { facingMode: currentFacingMode }
     })
     .then((stream) => {
       currentStream = stream;
