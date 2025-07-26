@@ -15,7 +15,7 @@ async function startCamera() {
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: true
+      video: { facingMode: currentFacingMode }
     });
     currentStream = stream;
     video.srcObject = stream;
@@ -80,9 +80,3 @@ function submitData() {
 
   alert("📍 บันทึกข้อมูลเรียบร้อย (จำลอง)");
 }
-
-// เริ่มต้นเปิดกล้อง
-window.onload = () => {
-  console.log("🔧 เริ่มเปิดกล้อง...");
-  startCamera();
-};
