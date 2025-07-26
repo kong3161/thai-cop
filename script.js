@@ -70,6 +70,7 @@ async function uploadToCloudinary(imageDataUrl) {
   });
 
   const data = await res.json();
+  console.log("Cloudinary response:", data);
   return data.secure_url;
 }
 
@@ -91,6 +92,7 @@ async function submitData() {
 
   try {
     const imageUrl = await uploadToCloudinary(imageData);
+    console.log("Image URL:", imageUrl);
 
     const response = await fetch("https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports", {
       method: "POST",
