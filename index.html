@@ -22,7 +22,20 @@
       margin-bottom: 20px;
     }
 
-    #camera, #preview {
+    #camera {
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 4 / 3;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      background-color: black;
+      object-fit: cover;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #preview {
       width: 100%;
       max-width: 320px;
       border-radius: 10px;
@@ -46,13 +59,21 @@
       justify-content: space-between;
       gap: 10px;
       width: 100%;
-      max-width: 360px;
+      max-width: 270px;
       margin-bottom: 10px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .button-group button {
       flex: 1;
       font-family: inherit;
+      height: 44px;
+      min-width: 0;
+      max-width: 100%;
+      font-size: 16px;
+      border-radius: 6px;
+      padding: 0 10px;
     }
 
     button {
@@ -60,10 +81,22 @@
       color: white;
       border: none;
       cursor: pointer;
+      height: 44px;
+      font-size: 16px;
+      border-radius: 6px;
+      padding: 0 10px;
     }
 
     button:hover {
       background-color: #0056b3;
+    }
+
+    .button-group button.capture-button {
+      background-color: #dc3545;
+    }
+
+    .button-group button.capture-button:hover {
+      background-color: #c82333;
     }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -85,7 +118,7 @@
   <button onclick="startCamera()">เปิดกล้อง</button>
   <video id="camera" autoplay playsinline muted></video><br/>
   <div class="button-group">
-    <button onclick="capturePhoto()">ถ่ายภาพ</button>
+    <button class="capture-button" onclick="capturePhoto()">ถ่ายภาพ</button>
     <button onclick="switchCamera()">สลับกล้อง</button>
   </div>
   <canvas id="preview" style="display: none;"></canvas>
