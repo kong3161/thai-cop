@@ -59,7 +59,6 @@ function capturePhoto() {
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 }
 
-// จำลองการบันทึกข้อมูล
 function submitData() {
   const name = document.getElementById("name").value;
   const note = document.getElementById("note").value;
@@ -75,18 +74,40 @@ function submitData() {
     return;
   }
 
-  console.log("📦 กำลังส่งข้อมูล:");
-  console.log("ชื่อ:", name);
-  console.log("รายละเอียด:", note);
-  console.log("เพศ:", gender);
-  console.log("อายุโดยประมาณ:", approxAge);
-  console.log("ลักษณะภายนอก:", appearance);
-  console.log("อาการ:", condition);
-  console.log("พิกัด:", latitude, longitude);
-  console.log("เวลา:", timestamp);
-  console.log("ภาพ:", imageData.substring(0, 100) + "...");
-
-  alert("📍 บันทึกข้อมูลเรียบร้อย (จำลอง)");
+  // ส่งข้อมูลเข้า Supabase
+  fetch("https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
+      "Prefer": "return=representation"
+    },
+    body: JSON.stringify({
+      name,
+      note,
+      gender,
+      approx_age: parseInt(approxAge),
+      appearance,
+      condition,
+      latitude,
+      longitude,
+      timestamp,
+      image: imageData
+    })
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("ไม่สามารถบันทึกข้อมูลได้");
+    return response.json();
+  })
+  .then(data => {
+    alert("📍 บันทึกข้อมูลเรียบร้อย");
+    console.log("บันทึกสำเร็จ:", data);
+  })
+  .catch(error => {
+    alert("เกิดข้อผิดพลาด: " + error.message);
+    console.error(error);
+  });
 }
 
 // เริ่มต้นเปิดกล้อง
