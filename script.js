@@ -38,6 +38,13 @@ if ("geolocation" in navigator) {
     latitude = position.coords.latitude;
     longitude = position.coords.longitude;
     locationInput.value = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+
+    // แสดงแผนที่ด้วย Leaflet
+    const map = L.map('map').setView([latitude, longitude], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    L.marker([latitude, longitude]).addTo(map);
   }, () => {
     locationInput.value = "ไม่สามารถระบุตำแหน่งได้";
   });

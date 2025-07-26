@@ -65,6 +65,18 @@
       background-color: #0056b3;
     }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map {
+      height: 300px;
+      width: 100%;
+      max-width: 360px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+  </style>
 </head>
 <body>
   <h2>บันทึกข้อมูลบุคคลในที่สาธารณะ</h2>
@@ -79,10 +91,11 @@
   <input type="text" id="name" placeholder="ชื่อ / ชื่อเล่น (ถ้ามี)" /><br/>
   <input type="text" id="note" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)" /><br/>
   <input type="text" id="location" readonly placeholder="พิกัด GPS" /><br/>
-  <div id="timestampDisplay" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
+  <div id="map"></div>
+  <div id="timestampDisplay" style="margin-bottom: 10px; font-size: 16px; font-weight: bold; color: #555;"></div>
   <button onclick="submitData()">✅ บันทึกข้อมูล</button>
 
-  <script src="script.js"></script>
+</script>
   <script>
     const timestamp = new Date();
     const options = { 
@@ -95,6 +108,28 @@
       hour12: false 
     };
     document.getElementById("timestampDisplay").textContent = "เวลาที่ระบบบันทึก: " + timestamp.toLocaleString('th-TH', options);
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        document.getElementById("location").value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+        const map = L.map('map').setView([lat, lng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        L.marker([lat, lng]).addTo(map);
+      });
+    }
   </script>
+
+  <div style="margin-top: 30px; font-size: 14px; color: #444; max-width: 400px; text-align: left;">
+    แอพนี้ใช้สำหรับบันทึกตำแหน่งบุคคลไร้บ้านหรือผู้ป่วยจิตเวชที่พบในพื้นที่สาธารณะ โดยบันทึกภาพและพฤติการณ์ของบุคคล  
+    ในส่วนของพิกัดและเวลาที่พบ ระบบจะบันทึกอัตโนมัติ<br><br>
+    ข้อมูลนี้ช่วยให้สามารถติดตามการเคลื่อนย้ายหรือพฤติกรรมของบุคคลได้  
+    เพื่อประโยชน์ในการดูแลหรือช่วยเหลืออย่างต่อเนื่อง<br><br>
+    พัฒนาโดยงานธุรการป้องกันปราบปราม สภ.ประตูน้ำจุฬาลงกรณ์
+  </div>
 </body>
 </html>
