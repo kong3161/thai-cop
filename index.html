@@ -81,7 +81,7 @@
 <body>
   <h2>บันทึกข้อมูลบุคคลในที่สาธารณะ</h2>
 
-  <video id="camera" autoplay playsinline width="300"></video><br/>
+  <video id="camera" autoplay playsinline muted width="300"></video><br/>
   <div class="button-group">
     <button onclick="capturePhoto()">ถ่ายภาพ</button>
     <button onclick="switchCamera()">สลับกล้อง</button>
@@ -131,5 +131,11 @@
     เพื่อประโยชน์ในการดูแลหรือช่วยเหลืออย่างต่อเนื่อง<br><br>
     พัฒนาโดยงานธุรการป้องกันปราบปราม สภ.ประตูน้ำจุฬาลงกรณ์
   </div>
+</script>
+  <script>
+    window.onload = function() {
+      startCamera();
+    };
+  </script>
 </body>
 </html>
