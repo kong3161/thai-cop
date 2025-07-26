@@ -63,6 +63,10 @@ function capturePhoto() {
 function submitData() {
   const name = document.getElementById("name").value;
   const note = document.getElementById("note").value;
+  const gender = document.getElementById("gender").value;
+  const approxAge = document.getElementById("approx_age").value;
+  const appearance = document.getElementById("appearance").value;
+  const condition = document.getElementById("condition").value;
   const imageData = canvas.toDataURL("image/jpeg");
   const timestamp = new Date().toISOString();
 
@@ -74,6 +78,10 @@ function submitData() {
   console.log("📦 กำลังส่งข้อมูล:");
   console.log("ชื่อ:", name);
   console.log("รายละเอียด:", note);
+  console.log("เพศ:", gender);
+  console.log("อายุโดยประมาณ:", approxAge);
+  console.log("ลักษณะภายนอก:", appearance);
+  console.log("อาการ:", condition);
   console.log("พิกัด:", latitude, longitude);
   console.log("เวลา:", timestamp);
   console.log("ภาพ:", imageData.substring(0, 100) + "...");
