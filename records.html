@@ -57,6 +57,17 @@
     const supabaseUrl = "https://alqdcyxbxmhotkyzicgv.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU";
 
+    function formatThaiDateTime(isoString) {
+      const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+      const date = new Date(isoString);
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      const hour = date.getHours().toString().padStart(2, '0');
+      const minute = date.getMinutes().toString().padStart(2, '0');
+      return `${day} ${month} ${year} ${hour}:${minute}`;
+    }
+
     async function loadReports() {
       const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*`, {
         headers: {
@@ -78,14 +89,46 @@
         card.className = "card";
         card.innerHTML = `
           <strong>${name}</strong><br/>
-          <em>${timestamp}</em><br/>
+          <em>${formatThaiDateTime(timestamp)}</em><br/>
           <p>${note}</p>
           ${image ? `<img src="${image}" />` : ""}
         `;
         container.appendChild(card);
 
-        if (latitude && longitude) {
-          const marker = L.marker([latitude, longitude]).addTo(map);
+        if (latitude && longitude && image) {
+          const customIcon = L.divIcon({
+            html: `
+    <div style="
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    ">
+      <div style="
+        background: url('${image}') no-repeat center/cover;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      "></div>
+      <div style="
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid #e74c3c;
+        margin-top: -1px;
+      "></div>
+    </div>
+  `,
+            className: '',
+            iconSize: [40, 50],
+            iconAnchor: [20, 50],
+            popupAnchor: [0, -40]
+          });
+
+          const marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map);
           marker.bindPopup(`<strong>${name}</strong><br>${note}`);
         }
       });
