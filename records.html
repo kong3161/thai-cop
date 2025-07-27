@@ -71,6 +71,32 @@
       background-color: #fff3cd;
       transition: background-color 0.3s;
     }
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      label[for="menu-toggle"] {
+        display: block !important;
+      }
+
+      #menu-items {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      #menu-toggle:checked + label + #menu-items {
+        display: flex;
+      }
+
+      #menu-items a {
+        padding: 0.5rem 0;
+        word-break: keep-all;
+        white-space: nowrap;
+      }
+    }
   </style>
 </head>
 <body>
@@ -87,28 +113,6 @@
       <a href="index.html" style="color: #005f99; text-decoration: none;">หน้าแรก</a>
       <a href="records.html" style="color: #005f99; text-decoration: none;">รายงานทั้งหมด</a>
     </div>
-    <style>
-      @media (max-width: 768px) {
-        nav {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        label[for="menu-toggle"] {
-          display: block !important;
-        }
-        #menu-items {
-          display: none;
-          flex-direction: column;
-          width: 100%;
-        }
-        #menu-toggle:checked + label + #menu-items {
-          display: flex;
-        }
-        #menu-items a {
-          padding: 0.5rem 0;
-        }
-      }
-    </style>
   </nav>
   <h1>ข้อมูลที่เคยบันทึก</h1>
   <div id="map"></div>
