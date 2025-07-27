@@ -145,23 +145,23 @@
     </div>
   </nav>
   <h1>ข้อมูลที่เคยบันทึก</h1>
-  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2.0rem; margin: 1rem;">
+  <div style="display: flex; flex-direction: column; gap: 0.5rem; margin: 1rem;">
     <!-- กล่องค้นหาจากคำ -->
-    <div class="search-box-mobile" style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem;">
-      <input id="note-search" type="text" placeholder="ค้นหาคำในรายละเอียด" style="width: 200px; font-size: 0.9rem; padding: 0.3rem;" />
-      <button onclick="filterByNote()" style="background-color: #007bff; color: white; font-size: 0.9rem; padding: 0.3rem;">ค้นหา</button>
-      <button onclick="resetNoteFilter()" style="background-color: #ccc; color: black; font-size: 0.9rem; padding: 0.3rem;">ล้าง</button>
-      <button id="show-markers-button" style="background-color: #ccc; color: black; font-size: 0.9rem; padding: 0.3rem;">แสดงหมุดทั้งหมด</button>
+    <div class="search-box-mobile" style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: nowrap; align-items: center; gap: 0.3rem; overflow-x: auto;">
+      <input id="note-search" type="text" placeholder="ค้นหาคำในรายละเอียด" style="width: 180px; font-size: 0.8rem; padding: 0.3rem;" />
+      <button onclick="filterByNote()" style="background-color: #007bff; color: white; font-size: 0.8rem; padding: 0.3rem;">ค้นหา</button>
+      <button onclick="resetNoteFilter()" style="background-color: #ccc; color: black; font-size: 0.8rem; padding: 0.3rem;">ล้าง</button>
+      <button id="show-markers-button" style="background-color: #ccc; color: black; font-size: 0.8rem; padding: 0.3rem;">แสดงหมุดทั้งหมด</button>
     </div>
 
     <!-- กล่องค้นหาจากวันที่ -->
-    <div class="search-box-mobile" style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem;">
-      <label for="start-date">จาก</label>
-      <input type="date" id="start-date" style="font-size: 0.9rem; padding: 0.3rem;" />
-      <label for="end-date">ถึง</label>
-      <input type="date" id="end-date" style="font-size: 0.9rem; padding: 0.3rem;" />
-      <button onclick="filterByDate()" style="background-color: #28a745; color: white; font-size: 0.9rem; padding: 0.3rem;">ค้นหาวันที่</button>
-      <button onclick="resetDateFilter()" style="background-color: #ccc; color: black; font-size: 0.9rem; padding: 0.3rem;">ล้างวันที่</button>
+    <div class="search-box-mobile" style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: nowrap; align-items: center; gap: 0.3rem; overflow-x: auto;">
+      <label for="start-date" style="font-size: 0.8rem;">จาก</label>
+      <input type="date" id="start-date" style="font-size: 0.8rem; padding: 0.3rem;" />
+      <label for="end-date" style="font-size: 0.8rem;">ถึง</label>
+      <input type="date" id="end-date" style="font-size: 0.8rem; padding: 0.3rem;" />
+      <button onclick="filterByDate()" style="background-color: #28a745; color: white; font-size: 0.8rem; padding: 0.3rem;">ค้นหาวันที่</button>
+      <button onclick="resetDateFilter()" style="background-color: #ccc; color: black; font-size: 0.8rem; padding: 0.3rem;">ล้างวันที่</button>
     </div>
   </div>
   <div id="map"></div>
