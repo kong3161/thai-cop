@@ -74,6 +74,16 @@
   </style>
 </head>
 <body>
+  <nav style="background: #e0f0ff; padding: 0.8rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0f0ff; font-family: 'Noto Sans Thai', sans-serif;">
+    <div style="display: flex; align-items: center;">
+      <img src="LOGO.png" alt="Logo" style="height: 32px; margin-right: 0.5rem;" />
+      <span style="font-weight: bold; font-size: 1.2rem; color: #005f99;">ระบบติดตามบุคคล</span>
+    </div>
+    <div>
+      <a href="index.html" style="margin: 0 1rem; color: #005f99; text-decoration: none;">หน้าแรก</a>
+      <a href="records.html" style="margin: 0 1rem; color: #005f99; text-decoration: none;">รายงานทั้งหมด</a>
+    </div>
+  </nav>
   <h1>ข้อมูลที่เคยบันทึก</h1>
   <div id="map"></div>
   <div id="records-container">
@@ -91,11 +101,13 @@
     </table>
   </div>
 
+  <!--
   <div style="text-align: center; margin: 2rem;">
     <a href="index.html" style="display: inline-block; background-color: #2196F3; color: white; padding: 1rem 2rem; font-size: 1.2rem; border-radius: 12px; text-decoration: none;">
       🔙 กลับหน้าแรก
     </a>
   </div>
+  -->
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <script>
