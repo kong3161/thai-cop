@@ -26,6 +26,26 @@ async function startCamera() {
   }
 }
 
+async function generatePersonCode() {
+  const res = await fetch("https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports?select=person_code", {
+    headers: {
+      apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
+      Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU"
+    }
+  });
+  const data = await res.json();
+  const existingCodes = data
+    .map(item => item.person_code)
+    .filter(code => code && code.startsWith('P'))
+    .map(code => parseInt(code.slice(1)))
+    .sort((a, b) => b - a);
+
+  const nextNum = existingCodes.length > 0 ? existingCodes[0] + 1 : 1;
+  const newCode = `P${String(nextNum).padStart(4, '0')}`;
+  const personCodeInput = document.getElementById("person_code");
+  if (personCodeInput) personCodeInput.value = newCode;
+}
+
 // สลับกล้อง
 function switchCamera() {
   currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
@@ -85,6 +105,24 @@ async function uploadToCloudinary() {
 }
 
 async function submitData() {
+  const personCodeInput = document.getElementById("person_code");
+  let personCode = personCodeInput.value.trim();
+
+  if (!personCode) {
+    // ดึง person_code ล่าสุดจาก Supabase
+    const res = await fetch("https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports?select=person_code&order=person_code.desc&limit=1", {
+      headers: {
+        apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
+        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU"
+      }
+    });
+    const last = await res.json();
+    const lastCode = last[0]?.person_code || "P0000";
+    const number = parseInt(lastCode.replace("P", ""), 10) + 1;
+    personCode = "P" + number.toString().padStart(4, "0");
+    personCodeInput.value = personCode;
+  }
+
   const name = document.getElementById("name").value;
   const note = document.getElementById("note").value;
   const gender = document.getElementById("gender").value;
@@ -122,7 +160,8 @@ async function submitData() {
         latitude,
         longitude,
         timestamp,
-        image: imageUrl
+        image: imageUrl,
+        person_code: personCode
       })
     });
 
@@ -139,6 +178,7 @@ async function submitData() {
 
 // เริ่มต้นเปิดกล้อง
 startCamera();
+generatePersonCode();
 
 // ขอพิกัดและเวลาใหม่
 function refreshLocation() {
