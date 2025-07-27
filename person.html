@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>แผนที่เฉพาะบุคคล</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      margin: 1rem;
+    }
+    #map {
+      height: 500px;
+      margin: 1rem;
+      border: 2px solid #ccc;
+    }
+    .person-marker-wrapper {
+      position: relative;
+      z-index: 2;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .person-marker-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      aspect-ratio: 1 / 1;
+    }
+
+    .person-marker-triangle {
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 10px solid red;
+      margin-top: -2px;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>แผนที่เฉพาะบุคคล</h1>
+  <div style="text-align: center; margin-bottom: 1rem;">
+    <a href="records.html" style="text-decoration: none; background: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 5px;">← กลับหน้าเดิม</a>
+  </div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const personCode = urlParams.get('person_code');
+
+    const supabaseUrl = "https://alqdcyxbxmhotkyzicgv.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU";
+
+    const map = L.map("map").setView([13.985034962557918, 100.61305511748218], 14);
+    const boundaryCoords = [
+      [13.96604418682376, 100.60520204672673],
+      [13.979403044850415, 100.66335411877041],
+      [14.009684926910657, 100.66373949380201],
+      [13.995619164337313, 100.601623465062],
+      [13.96604418682376, 100.60520204672673]
+    ];
+    L.polygon(boundaryCoords, {
+      color: 'red',
+      fillColor: '#3399ff',
+      fillOpacity: 0.1
+    }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    async function loadPersonMap() {
+      const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*&person_code=eq.${personCode}&order=timestamp.asc`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      });
+      const data = await res.json();
+
+      const coordinates = [];
+
+      data.forEach((report) => {
+        const { name, latitude, longitude, image, timestamp, note } = report;
+        if (latitude && longitude) {
+          coordinates.push([latitude, longitude]);
+
+          const icon = L.divIcon({
+            html: `
+              <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+                <div class="person-marker-wrapper">
+                  <img src="${image || 'https://placehold.co/40x40?text=?'}" class="person-marker-img"/>
+                </div>
+                <div class="person-marker-triangle"></div>
+              </div>
+            `,
+            iconSize: [40, 60],
+            iconAnchor: [20, 60],
+            className: ''
+          });
+          const marker = L.marker([latitude, longitude], { icon }).addTo(map);
+          marker.bindPopup(`<strong>${name}</strong><br>${note}<br>${timestamp}`);
+        }
+      });
+
+      if (coordinates.length > 1) {
+        L.polyline(coordinates, {
+          color: 'blue',
+          weight: 3,
+          opacity: 0.7
+        }).addTo(map);
+        map.fitBounds(L.polyline(coordinates).getBounds());
+      }
+    }
+
+    loadPersonMap();
+  </script>
+</body>
+</html>
