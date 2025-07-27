@@ -174,11 +174,12 @@
     function drawPolyline(coords) {
       if (routeLine) map.removeLayer(routeLine);
 
+      // Draw polyline segments from oldest to newest, latest = red
       const segments = coords.map((coord, i, arr) => {
         if (i < arr.length - 1) {
           const color = (i === arr.length - 2) ? 'red' : 'blue';
           const weight = (i === arr.length - 2) ? 3 : 2;
-          return L.polyline([coord, arr[i + 1]], {
+          return L.polyline([arr[i], arr[i + 1]], {
             color,
             weight,
             opacity: 0.7
@@ -251,8 +252,9 @@
       renderTable(data);
 
       if (coordinates.length > 1) {
-        drawPolyline(coordinates);
-        map.fitBounds(L.polyline(coordinates).getBounds());
+        const reversedCoords = [...coordinates].reverse();
+        drawPolyline(reversedCoords);
+        map.fitBounds(L.polyline(reversedCoords).getBounds());
       }
     }
 
