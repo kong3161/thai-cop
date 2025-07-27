@@ -66,6 +66,10 @@
         white-space: nowrap;
       }
     }
+    tr.highlight {
+      background-color: #fff3cd;
+      transition: background-color 0.3s;
+    }
   </style>
 </head>
 <body>
@@ -125,6 +129,7 @@
       data.forEach((report) => {
         const { name, note, latitude, longitude, image, timestamp } = report;
         const row = document.createElement("tr");
+        row.setAttribute("data-id", timestamp);
         row.innerHTML = `
           <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${name}</td>
           <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc; vertical-align: middle;">${formatThaiDateTime(timestamp)}</td>
@@ -170,6 +175,20 @@
 
           const marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map);
           marker.bindPopup(`<strong>${name}</strong><br>${note}`);
+
+          marker.on('click', () => {
+            // ลบ highlight เดิมทั้งหมด
+            document.querySelectorAll("tr.highlight").forEach(el => el.classList.remove("highlight"));
+
+            // หาแถวจาก timestamp แล้วไฮไลต์
+            const matchRow = document.querySelector(`tr[data-id='${timestamp}']`);
+            if (matchRow) {
+              matchRow.classList.add("highlight");
+              matchRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+              setTimeout(() => matchRow.classList.remove("highlight"), 5000);
+            }
+          });
         }
       });
     }
