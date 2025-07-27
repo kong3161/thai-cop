@@ -177,11 +177,11 @@
       const segments = coords.map((coord, i, arr) => {
         if (i < arr.length - 1) {
           const color = (i === arr.length - 2) ? 'red' : 'blue';
+          const weight = (i === arr.length - 2) ? 3 : 2;
           return L.polyline([coord, arr[i + 1]], {
             color,
-            weight: (i === arr.length - 2) ? 5 : 3,
-            opacity: 0.7,
-            dashArray: '5, 10'
+            weight,
+            opacity: 0.7
           }).addTo(map);
         }
         return null;
