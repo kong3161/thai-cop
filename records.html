@@ -72,12 +72,7 @@
       transition: background-color 0.3s;
     }
     @media (max-width: 768px) {
-      nav {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      label[for="menu-toggle"] {
+      #menu-icon {
         display: block !important;
       }
 
@@ -87,13 +82,12 @@
         width: 100%;
       }
 
-      #menu-toggle:checked + label + #menu-items {
+      #menu-toggle:checked + #menu-icon + #menu-items {
         display: flex;
       }
 
       #menu-items a {
-        padding: 0.5rem 0;
-        word-break: keep-all;
+        padding: 0.5rem 1rem;
         white-space: nowrap;
       }
     }
@@ -106,7 +100,7 @@
       <span style="font-weight: bold; font-size: 1.2rem; color: #005f99;">ระบบติดตามบุคคล</span>
     </div>
     <input type="checkbox" id="menu-toggle" style="display: none;">
-    <label for="menu-toggle" id="menu-icon" style="display: none; cursor: pointer; padding: 0.5rem; position: absolute; top: 10px; right: 10px;">
+    <label for="menu-toggle" id="menu-icon" style="cursor: pointer; padding: 0.5rem; display: none;">
       <span style="font-size: 1.5rem;">☰</span>
     </label>
     <div id="menu-items" style="display: flex; flex-direction: row; gap: 1rem;">
