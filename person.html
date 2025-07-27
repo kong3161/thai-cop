@@ -62,6 +62,7 @@
     <a href="records.html" style="text-decoration: none; background: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 5px;">← กลับหน้าเดิม</a>
   </div>
   <div id="map"></div>
+  <div id="record-table" style="margin: 1rem;"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <script>
@@ -88,6 +89,8 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
+    const markerRefs = {};
+
     async function loadPersonMap() {
       const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*&person_code=eq.${personCode}&order=timestamp.asc`, {
         headers: {
@@ -99,7 +102,7 @@
 
       const coordinates = [];
 
-      data.forEach((report) => {
+      data.forEach((report, index) => {
         const { name, latitude, longitude, image, timestamp, note } = report;
         if (latitude && longitude) {
           coordinates.push([latitude, longitude]);
@@ -119,8 +122,20 @@
           });
           const marker = L.marker([latitude, longitude], { icon }).addTo(map);
           marker.bindPopup(`<strong>${name}</strong><br>${note}<br>${timestamp}`);
+          markerRefs[index] = marker;
+
+          marker.on('click', () => {
+            const row = document.querySelector(`#row-${index}`);
+            if (row) {
+              document.querySelectorAll('tr').forEach(r => r.style.background = '');
+              row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              row.style.background = '#fffa90';
+            }
+          });
         }
       });
+
+      renderTable(data);
 
       if (coordinates.length > 1) {
         L.polyline(coordinates, {
@@ -129,6 +144,69 @@
           opacity: 0.7
         }).addTo(map);
         map.fitBounds(L.polyline(coordinates).getBounds());
+      }
+    }
+
+    function formatDateTime(datetime) {
+      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+
+      const dt = new Date(datetime);
+      const datePart = dt.toLocaleDateString('th-TH', dateOptions);
+      const timePart = dt.toLocaleTimeString('th-TH', timeOptions);
+
+      return `${datePart}<br/>เวลา ${timePart} น.`;
+    }
+
+    function renderTable(data) {
+      if (data.length === 0) return;
+
+      const table = document.createElement('table');
+      table.style.width = '100%';
+      table.style.borderCollapse = 'collapse';
+      table.style.fontSize = '14px';
+      table.innerHTML = `
+        <thead>
+          <tr style="background:#e0e0e0;">
+            <th style="border:1px solid #ccc; padding:0.5rem; width:12%;">รหัสบุคคล</th>
+            <th style="border:1px solid #ccc; padding:0.5rem; width:12%;">วันเวลา</th>
+            <th style="border:1px solid #ccc; padding:0.5rem; width:12%;">พิกัด</th>
+            <th style="border:1px solid #ccc; padding:0.5rem; width:52%;">รายละเอียด</th>
+            <th style="border:1px solid #ccc; padding:0.5rem; width:12%;">ภาพ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map((r, index) => `
+            <tr id="row-${index}" onclick="highlightMarker(${index})">
+              <td style="border:1px solid #ccc; padding:0.5rem; text-align:center; width:12%;">${r.person_code}</td>
+              <td style="border:1px solid #ccc; padding:0.5rem; text-align:center; width:12%;">${formatDateTime(r.timestamp)}</td>
+              <td style="border:1px solid #ccc; padding:0.5rem; text-align:center; width:12%;">${r.latitude.toFixed(6)}, ${r.longitude.toFixed(6)}</td>
+              <td style="border:1px solid #ccc; padding:0.5rem; width:52%;">${r.note}</td>
+              <td style="border:1px solid #ccc; padding:0.5rem; text-align:center; width:12%;">
+                ${r.image ? `
+                  <div>
+                    <img src="${r.image}" style="max-height:50px; border-radius:6px;" />
+                    <br/>
+                    <a href="${r.image}" target="_blank" style="font-size:12px;">ดูภาพขนาดจริง</a>
+                  </div>
+                ` : ''}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+      document.getElementById("record-table").appendChild(table);
+    }
+
+    function highlightMarker(index) {
+      document.querySelectorAll('#record-table tbody tr').forEach(r => r.style.background = '');
+      const row = document.querySelector(`#row-${index}`);
+      if (row) row.style.background = '#fffa90';
+
+      const marker = markerRefs[index];
+      if (marker) {
+        marker.openPopup();
+        map.setView(marker.getLatLng(), 16);
       }
     }
 
