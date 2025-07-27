@@ -120,9 +120,24 @@
       });
       const data = await res.json();
 
-      const map = L.map("map").setView([13.736717, 100.523186], 10);
+      const map = L.map("map").setView([13.985034962557918, 100.61305511748218], 15);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      const zoneCoords = [
+        [13.96604418682376, 100.60520204672673],
+        [13.979403044850415, 100.66335411877041],
+        [14.009684926910657, 100.66373949380201],
+        [13.995619164337313, 100.601623465062],
+        [13.96604418682376, 100.60520204672673]
+      ];
+
+      const zone = L.polygon(zoneCoords, {
+        color: "#007bff",
+        weight: 2,
+        fillColor: "#007bff",
+        fillOpacity: 0.1
       }).addTo(map);
 
       const tbody = document.getElementById("records-body");
