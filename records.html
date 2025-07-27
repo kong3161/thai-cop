@@ -49,6 +49,23 @@
   gap: 1rem;
   padding: 1rem;
 } */
+    /* Responsive table for mobile */
+    @media (max-width: 768px) {
+      table#records {
+        font-size: 0.8rem;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      #records-container {
+        overflow-x: auto;
+      }
+
+      #records thead, #records tbody, #records th, #records td, #records tr {
+        white-space: nowrap;
+      }
+    }
   </style>
 </head>
 <body>
@@ -60,9 +77,7 @@
         <tr>
           <th style="padding: 0.5rem; border: 1px solid #ccc;">ชื่อ</th>
           <th style="padding: 0.5rem; border: 1px solid #ccc;">วันเวลา</th>
-          <th style="padding: 0.5rem; border: 1px solid #ccc;">รายละเอียด</th>
-          <th style="padding: 0.5rem; border: 1px solid #ccc;">ละติจูด</th>
-          <th style="padding: 0.5rem; border: 1px solid #ccc;">ลองจิจูด</th>
+          <th style="padding: 0.5rem; border: 1px solid #ccc; width: 40%;">รายละเอียด</th>
           <th style="padding: 0.5rem; border: 1px solid #ccc;">รูปภาพ</th>
         </tr>
       </thead>
@@ -113,9 +128,7 @@
         row.innerHTML = `
           <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${name}</td>
           <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${formatThaiDateTime(timestamp)}</td>
-          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${note}</td>
-          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${latitude || '-'}</td>
-          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">${longitude || '-'}</td>
+          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc; width: 40%;">${note}</td>
           <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc; vertical-align: middle;">
             ${image ? `<div style="display: flex; flex-direction: column; align-items: center;"><img src="${image}" style="max-width: 80px; border-radius: 6px; margin-bottom: 4px;" /><a href="${image}" target="_blank">ดูภาพเต็ม</a></div>` : "—"}
           </td>
