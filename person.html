@@ -62,6 +62,9 @@
     <a href="records.html" style="text-decoration: none; background: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 5px;">← กลับหน้าเดิม</a>
   </div>
   <div id="map"></div>
+  <div style="text-align:center; margin-bottom: 1rem;">
+    <button id="toggleRoute" style="padding: 0.5rem 1rem; border: none; background: #444; color: white; border-radius: 5px;">ซ่อนเส้นทาง</button>
+  </div>
   <div id="record-table" style="margin: 1rem;"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
@@ -90,6 +93,40 @@
     }).addTo(map);
 
     const markerRefs = {};
+    let routeLine = null;
+    let showRoute = true;
+    const coordinates = [];
+
+    function drawPolyline(coords) {
+      if (routeLine) map.removeLayer(routeLine);
+
+      const segments = coords.map((coord, i, arr) => {
+        if (i < arr.length - 1) {
+          const color = (i === arr.length - 2) ? 'red' : 'blue';
+          return L.polyline([coord, arr[i + 1]], {
+            color,
+            weight: (i === arr.length - 2) ? 5 : 3,
+            opacity: 0.7,
+            dashArray: '5, 10'
+          }).addTo(map);
+        }
+        return null;
+      }).filter(Boolean);
+
+      routeLine = L.layerGroup(segments);
+      routeLine.addTo(map);
+    }
+
+    document.getElementById('toggleRoute').addEventListener('click', () => {
+      showRoute = !showRoute;
+      if (showRoute) {
+        drawPolyline(coordinates);
+        document.getElementById('toggleRoute').textContent = 'ซ่อนเส้นทาง';
+      } else {
+        if (routeLine) map.removeLayer(routeLine);
+        document.getElementById('toggleRoute').textContent = 'แสดงเส้นทาง';
+      }
+    });
 
     async function loadPersonMap() {
       const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*&person_code=eq.${personCode}&order=timestamp.desc`, {
@@ -99,8 +136,6 @@
         },
       });
       const data = await res.json();
-
-      const coordinates = [];
 
       data.forEach((report, index) => {
         const { name, latitude, longitude, image, timestamp, note } = report;
@@ -138,11 +173,7 @@
       renderTable(data);
 
       if (coordinates.length > 1) {
-        L.polyline(coordinates, {
-          color: 'blue',
-          weight: 3,
-          opacity: 0.7
-        }).addTo(map);
+        drawPolyline(coordinates);
         map.fitBounds(L.polyline(coordinates).getBounds());
       }
     }
