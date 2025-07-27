@@ -221,7 +221,13 @@
             const matchRow = document.querySelector(`tr[data-id='${timestamp}']`);
             if (matchRow) {
               matchRow.classList.add("highlight");
-              matchRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+              // เลื่อน scroll เฉพาะในตาราง ไม่ให้หน้าเว็บเลื่อน
+              const container = document.getElementById("records-container");
+              container.scrollTo({
+                top: matchRow.offsetTop - container.offsetTop,
+                behavior: 'smooth'
+              });
 
               setTimeout(() => matchRow.classList.remove("highlight"), 5000);
             }

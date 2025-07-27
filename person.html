@@ -162,9 +162,13 @@
           marker.on('click', () => {
             const row = document.querySelector(`#row-${index}`);
             if (row) {
-              document.querySelectorAll('tr').forEach(r => r.style.background = '');
-              row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              document.querySelectorAll('#record-table tbody tr').forEach(r => r.style.background = '');
               row.style.background = '#fffa90';
+              const container = document.getElementById('record-table');
+              container.scrollTo({
+                top: row.offsetTop - container.offsetTop,
+                behavior: 'smooth'
+              });
             }
           });
         }
