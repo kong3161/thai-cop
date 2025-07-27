@@ -71,21 +71,23 @@
       background-color: #fff3cd;
       transition: background-color 0.3s;
     }
+    #menu-items {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+    }
     @media (max-width: 768px) {
       #menu-icon {
         display: block !important;
       }
-
       #menu-items {
         display: none;
         flex-direction: column;
         width: 100%;
       }
-
       #menu-toggle:checked + #menu-icon + #menu-items {
         display: flex;
       }
-
       #menu-items a {
         padding: 0.5rem 1rem;
         white-space: nowrap;
@@ -103,7 +105,7 @@
     <label for="menu-toggle" id="menu-icon" style="cursor: pointer; padding: 0.5rem; display: none;">
       <span style="font-size: 1.5rem;">☰</span>
     </label>
-    <div id="menu-items" style="display: flex; flex-direction: row; gap: 1rem;">
+    <div id="menu-items">
       <a href="index.html" style="color: #005f99; text-decoration: none;">หน้าแรก</a>
       <a href="records.html" style="color: #005f99; text-decoration: none;">รายงานทั้งหมด</a>
     </div>
