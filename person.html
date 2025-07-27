@@ -121,7 +121,7 @@
             className: ''
           });
           const marker = L.marker([latitude, longitude], { icon }).addTo(map);
-          marker.bindPopup(`<strong>${name}</strong><br>${note}<br>${timestamp}`);
+          marker.bindPopup(`<strong>${name}</strong><br>${note}<br>${formatDateTime(timestamp)}`);
           markerRefs[index] = marker;
 
           marker.on('click', () => {
