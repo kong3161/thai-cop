@@ -92,7 +92,7 @@
     const markerRefs = {};
 
     async function loadPersonMap() {
-      const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*&person_code=eq.${personCode}&order=timestamp.asc`, {
+      const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*&person_code=eq.${personCode}&order=timestamp.desc`, {
         headers: {
           apikey: supabaseKey,
           Authorization: `Bearer ${supabaseKey}`,

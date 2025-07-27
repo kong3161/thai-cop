@@ -83,7 +83,7 @@
           <th style="padding: 0.5rem; border: 1px solid #ccc; width: 20%;">วันเวลา</th>
           <th style="padding: 0.5rem; border: 1px solid #ccc; width: 50%;">รายละเอียด</th>
           <th style="padding: 0.5rem; border: 1px solid #ccc;">รูปภาพ</th>
-          <th style="padding: 0.5rem; border: 1px solid #ccc;">แผนที่บุคคล</th>
+          <th style="padding: 0.5rem; border: 1px solid #ccc;">รายละเอียดบุคคล</th>
         </tr>
       </thead>
       <tbody id="records-body"></tbody>
@@ -113,7 +113,7 @@
     }
 
     async function loadReports() {
-      const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*`, {
+      const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*&order=timestamp.desc`, {
         headers: {
           apikey: supabaseKey,
           Authorization: `Bearer ${supabaseKey}`,
@@ -155,7 +155,7 @@
             ${image ? `<div style="display: flex; flex-direction: column; align-items: center;"><img src="${image}" style="max-width: 80px; border-radius: 6px; margin-bottom: 4px;" /><a href="${image}" target="_blank">ดูภาพเต็ม</a></div>` : "—"}
           </td>
           <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">
-            <a href="person.html?person_code=${report.person_code}" style="color: #007bff; text-decoration: none;">แผนที่</a>
+            <a href="person.html?person_code=${report.person_code}" style="color: #007bff; text-decoration: none;">รายละเอียด</a>
           </td>
         `;
         tbody.appendChild(row);
