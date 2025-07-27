@@ -141,6 +141,7 @@
       }).addTo(map);
 
       const tbody = document.getElementById("records-body");
+      const markerMap = {};
       data.forEach((report) => {
         const { name, note, latitude, longitude, image, timestamp } = report;
         const row = document.createElement("tr");
@@ -154,6 +155,17 @@
           </td>
         `;
         tbody.appendChild(row);
+
+        row.addEventListener("click", () => {
+          document.querySelectorAll("tr.highlight").forEach(el => el.classList.remove("highlight"));
+          row.classList.add("highlight");
+
+          const targetMarker = markerMap[timestamp];
+          if (targetMarker) {
+            map.setView(targetMarker.getLatLng(), 17, { animate: true });
+            targetMarker.openPopup();
+          }
+        });
 
         if (latitude && longitude && image) {
           const customIcon = L.divIcon({
@@ -190,6 +202,8 @@
 
           const marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map);
           marker.bindPopup(`<strong>${name}</strong><br>${note}`);
+
+          markerMap[timestamp] = marker;
 
           marker.on('click', () => {
             // ลบ highlight เดิมทั้งหมด
