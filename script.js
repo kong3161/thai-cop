@@ -168,6 +168,7 @@ async function submitData() {
     if (!response.ok) throw new Error("ไม่สามารถบันทึกข้อมูลได้");
     const data = await response.json();
     alert("📍 บันทึกข้อมูลเรียบร้อย");
+    location.reload();
     console.log("บันทึกสำเร็จ:", data);
 
   } catch (error) {
