@@ -7,6 +7,26 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet" />
   <style>
+    @media (max-width: 600px) {
+      .search-box-mobile {
+        flex-direction: column !important;
+        align-items: stretch !important;
+      }
+
+      .search-box-mobile input,
+      .search-box-mobile button,
+      .search-box-mobile label {
+        width: 100% !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 0.4rem;
+      }
+
+      #map button {
+        width: 140px !important;
+        font-size: 0.9rem !important;
+        padding: 8px 12px !important;
+      }
+    }
     body {
       font-family: 'Noto Sans Thai', sans-serif;
       margin: 0;
@@ -127,7 +147,7 @@
   <h1>ข้อมูลที่เคยบันทึก</h1>
   <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2.0rem; margin: 1rem;">
     <!-- กล่องค้นหาจากคำ -->
-    <div style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem;">
+    <div class="search-box-mobile" style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem;">
       <input id="note-search" type="text" placeholder="ค้นหาคำในรายละเอียด" style="width: 200px; font-size: 0.9rem; padding: 0.3rem;" />
       <button onclick="filterByNote()" style="background-color: #007bff; color: white; font-size: 0.9rem; padding: 0.3rem;">ค้นหา</button>
       <button onclick="resetNoteFilter()" style="background-color: #ccc; color: black; font-size: 0.9rem; padding: 0.3rem;">ล้าง</button>
@@ -135,7 +155,7 @@
     </div>
 
     <!-- กล่องค้นหาจากวันที่ -->
-    <div style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem;">
+    <div class="search-box-mobile" style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem;">
       <label for="start-date">จาก</label>
       <input type="date" id="start-date" style="font-size: 0.9rem; padding: 0.3rem;" />
       <label for="end-date">ถึง</label>
