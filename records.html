@@ -44,6 +44,21 @@
       display: block;
     }
 
+    /* Consistent styling for filter input fields and buttons */
+    input[type="text"],
+    input[type="date"],
+    button {
+      font-size: 0.9rem;
+      padding: 0.3rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-family: 'Noto Sans Thai', sans-serif;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+    }
+
 /* #records {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -110,6 +125,25 @@
     </div>
   </nav>
   <h1>ข้อมูลที่เคยบันทึก</h1>
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2.0rem; margin: 1rem;">
+    <!-- กล่องค้นหาจากคำ -->
+    <div style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem;">
+      <input id="note-search" type="text" placeholder="ค้นหาคำในรายละเอียด" style="width: 200px; font-size: 0.9rem; padding: 0.3rem;" />
+      <button onclick="filterByNote()" style="background-color: #007bff; color: white; font-size: 0.9rem; padding: 0.3rem;">ค้นหา</button>
+      <button onclick="resetNoteFilter()" style="background-color: #ccc; color: black; font-size: 0.9rem; padding: 0.3rem;">ล้าง</button>
+      <button id="show-markers-button" style="background-color: #ccc; color: black; font-size: 0.9rem; padding: 0.3rem;">แสดงหมุดทั้งหมด</button>
+    </div>
+
+    <!-- กล่องค้นหาจากวันที่ -->
+    <div style="background-color: #f4f4f4; padding: 0.5rem; border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem;">
+      <label for="start-date">จาก</label>
+      <input type="date" id="start-date" style="font-size: 0.9rem; padding: 0.3rem;" />
+      <label for="end-date">ถึง</label>
+      <input type="date" id="end-date" style="font-size: 0.9rem; padding: 0.3rem;" />
+      <button onclick="filterByDate()" style="background-color: #28a745; color: white; font-size: 0.9rem; padding: 0.3rem;">ค้นหาวันที่</button>
+      <button onclick="resetDateFilter()" style="background-color: #ccc; color: black; font-size: 0.9rem; padding: 0.3rem;">ล้างวันที่</button>
+    </div>
+  </div>
   <div id="map"></div>
   <div id="records-container">
     <table id="records" style="width: 100%; border-collapse: collapse; background: white; margin: 1rem auto; border: 1px solid #ccc; text-align: center;">
@@ -150,8 +184,13 @@
       return `${day} ${month} ${year}<br>เวลา ${hour}:${minute} น.`;
     }
 
+    let allMarkers = [];
+    let markerMap = {};
+    let map;
+
     async function loadReports() {
-      const allMarkers = [];
+      allMarkers = [];
+      markerMap = {};
 
       const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*&order=timestamp.desc`, {
         headers: {
@@ -161,7 +200,7 @@
       });
       const data = await res.json();
 
-      const map = L.map("map").setView([13.985034962557918, 100.61305511748218], 15);
+      map = L.map("map").setView([13.985034962557918, 100.61305511748218], 15);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
@@ -182,7 +221,7 @@
       }).addTo(map);
 
       const tbody = document.getElementById("records-body");
-      const markerMap = {};
+      tbody.innerHTML = '';
       data.forEach((report) => {
         const { name, note, latitude, longitude, image, timestamp } = report;
         const row = document.createElement("tr");
@@ -289,10 +328,11 @@
       });
 
       let isHeatVisible = false;
+      let isShowingAllMarkers = true;
 
       const toggleButton = document.createElement("button");
       toggleButton.textContent = "เปิด Heatmap";
-      toggleButton.style.cssText = "position: absolute; top: 10px; right: 10px; z-index: 1000; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;";
+      toggleButton.style.cssText = "position: absolute; top: 10px; right: 10px; z-index: 1000; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; width: 160px;";
       document.getElementById("map").appendChild(toggleButton);
 
       toggleButton.addEventListener("click", () => {
@@ -307,9 +347,165 @@
         }
         isHeatVisible = !isHeatVisible;
       });
+      // Use the show-markers-button inside the search box
+      const showMarkersButton = document.getElementById("show-markers-button");
+      showMarkersButton.onclick = () => {
+        const keyword = document.getElementById("note-search").value.toLowerCase();
+        const visibleTimestamps = [];
+
+        document.querySelectorAll("#records-body tr").forEach(row => {
+          const note = row.cells[2]?.textContent.toLowerCase();
+          if (note.includes(keyword)) {
+            visibleTimestamps.push(row.getAttribute("data-id"));
+          }
+        });
+
+        if (isShowingAllMarkers) {
+          // ซ่อนหมุดทั้งหมด แล้วแสดงเฉพาะผลการค้นหา
+          allMarkers.forEach(marker => map.removeLayer(marker));
+          visibleTimestamps.forEach(ts => {
+            if (markerMap[ts]) {
+              markerMap[ts].addTo(map);
+            }
+          });
+          showMarkersButton.textContent = "แสดงหมุดทั้งหมด";
+        } else {
+          allMarkers.forEach(marker => marker.addTo(map));
+          showMarkersButton.textContent = "เฉพาะที่ค้นหา";
+        }
+        isShowingAllMarkers = !isShowingAllMarkers;
+      };
+
+      // Add "จุดล่าสุดของทุกคน" button under the showMarkersButton
+      const showLatestPointsButton = document.createElement("button");
+      showLatestPointsButton.textContent = "จุดล่าสุดของทุกคน";
+      showLatestPointsButton.style.cssText = "position: absolute; top: 60px; right: 10px; z-index: 1000; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; width: 160px;";
+      document.getElementById("map").appendChild(showLatestPointsButton);
+
+      // เพิ่มตัวแปรสถานะก่อนฟังก์ชัน onclick
+      let isShowingLatestOnly = false;
+
+      showLatestPointsButton.onclick = () => {
+        if (isShowingLatestOnly) {
+          // แสดงจุดทั้งหมด
+          allMarkers.forEach(marker => marker.addTo(map));
+          showLatestPointsButton.textContent = "จุดล่าสุดของทุกคน";
+          // แสดงแถวทั้งหมดในตาราง
+          document.querySelectorAll("#records-body tr").forEach(row => {
+            row.style.display = "";
+          });
+        } else {
+          // คำนวณและแสดงเฉพาะจุดล่าสุดของแต่ละคน
+          const latestMarkers = {};
+          document.querySelectorAll("#records-body tr").forEach(row => {
+            const personCode = new URLSearchParams(row.querySelector("a[href^='person.html']").href.split("?")[1]).get("person_code");
+            const ts = row.getAttribute("data-id");
+            if (!latestMarkers[personCode]) {
+              latestMarkers[personCode] = ts; // แถวบนสุดคือ timestamp ล่าสุด
+            }
+          });
+
+          // ซ่อนหมุดทั้งหมด
+          allMarkers.forEach(marker => map.removeLayer(marker));
+
+          // แสดงเฉพาะหมุดล่าสุดของแต่ละคน
+          Object.values(latestMarkers).forEach(ts => {
+            if (markerMap[ts]) {
+              markerMap[ts].addTo(map);
+            }
+          });
+
+          // ซ่อนทุกแถวในตาราง
+          document.querySelectorAll("#records-body tr").forEach(row => {
+            row.style.display = "none";
+          });
+          // แสดงเฉพาะแถวที่มี timestamp ตรงกับ latestMarkers
+          Object.values(latestMarkers).forEach(ts => {
+            const row = document.querySelector(`tr[data-id='${ts}']`);
+            if (row) row.style.display = "";
+          });
+
+          showLatestPointsButton.textContent = "ล้างค่า";
+        }
+
+        isShowingLatestOnly = !isShowingLatestOnly;
+      };
     }
 
     loadReports();
+
+    function filterByNote() {
+      const keyword = document.getElementById("note-search").value.toLowerCase();
+      const rows = document.querySelectorAll("#records-body tr");
+      let visibleTimestamps = [];
+
+      rows.forEach(row => {
+        const note = row.cells[2]?.textContent.toLowerCase();
+        if (note.includes(keyword)) {
+          row.style.display = "";
+          visibleTimestamps.push(row.getAttribute("data-id"));
+        } else {
+          row.style.display = "none";
+        }
+      });
+
+      // ซ่อนหมุดทั้งหมดก่อน
+      allMarkers.forEach(marker => map.removeLayer(marker));
+      // แสดงเฉพาะหมุดที่ตรงกับผลการค้นหา
+      visibleTimestamps.forEach(ts => {
+        if (markerMap[ts]) {
+          markerMap[ts].addTo(map);
+        }
+      });
+    }
+
+    function resetNoteFilter() {
+      document.getElementById("note-search").value = "";
+      const rows = document.querySelectorAll("#records-body tr");
+      rows.forEach(row => row.style.display = "");
+
+      // คืนค่าหมุดทั้งหมด
+      allMarkers.forEach(marker => marker.addTo(map));
+    }
+
+    // ฟังก์ชันนี้ถูกแทนที่ด้วย toggle ใน showMarkersButton
+
+    function filterByDate() {
+      const start = document.getElementById("start-date").value;
+      const end = document.getElementById("end-date").value;
+      const rows = document.querySelectorAll("#records-body tr");
+
+      const startDate = start ? new Date(`${start}T00:00:00`) : null;
+      const endDate = end ? new Date(`${end}T23:59:59`) : null;
+
+      rows.forEach(row => {
+        const ts = row.getAttribute("data-id");
+        const rowDate = new Date(ts);
+        let visible = true;
+        if (startDate && rowDate < startDate) visible = false;
+        if (endDate && rowDate > endDate) visible = false;
+        row.style.display = visible ? "" : "none";
+      });
+
+      // ซ่อนหมุดทั้งหมดก่อน
+      allMarkers.forEach(marker => map.removeLayer(marker));
+
+      // แสดงเฉพาะหมุดที่แถวยังไม่ถูกซ่อน
+      document.querySelectorAll("#records-body tr").forEach(row => {
+        if (row.style.display !== "none") {
+          const ts = row.getAttribute("data-id");
+          if (markerMap[ts]) markerMap[ts].addTo(map);
+        }
+      });
+    }
+
+    function resetDateFilter() {
+      document.getElementById("start-date").value = "";
+      document.getElementById("end-date").value = "";
+      document.querySelectorAll("#records-body tr").forEach(row => row.style.display = "");
+
+      allMarkers.forEach(marker => marker.addTo(map));
+    }
   </script>
   <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 </body>
