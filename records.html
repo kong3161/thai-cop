@@ -24,6 +24,7 @@
       height: 400px;
       margin: 1rem;
       border: 2px solid #ccc;
+      position: relative;
     }
     /* .card {
       background: white;
@@ -113,6 +114,8 @@
     }
 
     async function loadReports() {
+      const allMarkers = [];
+
       const res = await fetch(`${supabaseUrl}/rest/v1/reports?select=*&order=timestamp.desc`, {
         headers: {
           apikey: supabaseKey,
@@ -205,6 +208,7 @@
           });
 
           const marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map);
+          allMarkers.push(marker);
           marker.bindPopup(`<strong>${name}</strong><br>${note}`);
 
           markerMap[timestamp] = marker;
@@ -224,9 +228,46 @@
           });
         }
       });
+
+      const heatPoints = data
+        .filter((r) => r.latitude && r.longitude)
+        .map((r) => [r.latitude, r.longitude, 1]);
+
+      const heatLayer = L.heatLayer(heatPoints, {
+        radius: 25,
+        blur: 15,
+        maxZoom: 17,
+        gradient: {
+          0.1: '#ffb3b3',
+          0.4: '#ff4d4d',
+          0.7: '#e60000',
+          1.0: '#990000'
+        }
+      });
+
+      let isHeatVisible = false;
+
+      const toggleButton = document.createElement("button");
+      toggleButton.textContent = "เปิด Heatmap";
+      toggleButton.style.cssText = "position: absolute; top: 10px; right: 10px; z-index: 1000; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;";
+      document.getElementById("map").appendChild(toggleButton);
+
+      toggleButton.addEventListener("click", () => {
+        if (isHeatVisible) {
+          map.removeLayer(heatLayer);
+          toggleButton.textContent = "เปิด Heatmap";
+          allMarkers.forEach(marker => marker.addTo(map));
+        } else {
+          heatLayer.addTo(map);
+          toggleButton.textContent = "ปิด Heatmap";
+          allMarkers.forEach(marker => map.removeLayer(marker));
+        }
+        isHeatVisible = !isHeatVisible;
+      });
     }
 
     loadReports();
   </script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 </body>
 </html>
