@@ -193,17 +193,21 @@
     };
     document.getElementById("timestampDisplay").textContent = "เวลาที่ระบบบันทึก: " + timestamp.toLocaleString('th-TH', options);
 
+    let map; // ให้ประกาศไว้ภายนอก
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         document.getElementById("location").value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
-        const map = L.map('map').setView([lat, lng], 16);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        L.marker([lat, lng]).addTo(map);
+        if (!map) {
+          map = L.map('map').setView([lat, lng], 16);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+          L.marker([lat, lng]).addTo(map);
+        }
       });
     }
   </script>

@@ -266,6 +266,9 @@
       });
       const data = await res.json();
 
+      if (map) {
+        map.remove(); // ป้องกัน Error: Map container is already initialized.
+      }
       map = L.map("map").setView([13.985034962557918, 100.61305511748218], 15);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
@@ -588,6 +591,9 @@
         button.textContent = "แสดงเมนูค้นหา";
       }
     }
+
+    // Refactor: Replace document.getElementById("gender").value with safer version everywhere
+    // (No instance found in this file, so nothing to replace)
   </script>
   <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 </body>
