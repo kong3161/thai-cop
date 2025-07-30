@@ -230,6 +230,7 @@
         });
 
         document.getElementById("delete-button").addEventListener("click", async function () {
+            const id = document.getElementById("record-id").value;
             if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) {
                 const { error } = await supabaseClient
                     .from("reports")
