@@ -96,6 +96,21 @@
           gap: 16px;
         }
       }
+      #dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 8px;
+        z-index: 1000;
+      }
+
+      #dropdown-menu.show {
+        display: block;
+      }
     </style>
 </head>
 <body>
@@ -249,7 +264,7 @@
     // เมนู toggle
     document.getElementById("menu-toggle").addEventListener("click", function () {
         const menu = document.getElementById("dropdown-menu");
-        menu.style.display = menu.style.display === "none" ? "block" : "none";
+        menu.classList.toggle("show");
     });
     </script>
 </body>
