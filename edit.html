@@ -164,11 +164,11 @@
                 .from("person_tracking")
                 .select("id, name, note, latitude, longitude, timestamp")
                 .eq("id", id)
-                .maybeSingle();  // ป้องกัน crash หากไม่มีข้อมูล
+                .single();  // ใช้ .single() เพื่อ error ชัดเจนขึ้น
 
             if (error) {
-                console.error("ไม่สามารถโหลดข้อมูลได้:", error.message);
-                alert("ไม่สามารถโหลดข้อมูลได้");
+                console.error("โหลดข้อมูลล้มเหลว:", error);
+                alert("ไม่สามารถโหลดข้อมูลได้: " + error.message);
                 return;
             }
 
