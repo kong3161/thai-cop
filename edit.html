@@ -231,17 +231,14 @@
 
         document.getElementById("delete-button").addEventListener("click", async function () {
             if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) {
-                const { data, error } = await supabaseClient
+                const { error } = await supabaseClient
                     .from("reports")
                     .delete()
-                    .eq("id", id)
-                    .select();
+                    .eq("id", id);
 
                 if (error) {
                     console.error("ลบข้อมูลล้มเหลว:", error);
                     alert("ไม่สามารถลบข้อมูลได้: " + error.message);
-                } else if (!data || data.length === 0) {
-                    alert("คำสั่งลบส่งไปสำเร็จ แต่ไม่มีข้อมูลที่กลับมา (อาจเกิดจากไม่มีข้อมูลนี้อยู่แล้ว)");
                 } else {
                     alert("ลบข้อมูลเรียบร้อยแล้ว");
                     window.location.href = "records.html";
