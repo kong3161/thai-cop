@@ -156,11 +156,11 @@
         const SUPABASE_URL = "https://alqdcyxbxmhotkyzicgv.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU";
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ฟังก์ชันโหลดข้อมูลเดิม
         async function fetchSupabaseRecord(id) {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from("person_tracking")
                 .select("id, name, note, latitude, longitude, timestamp")
                 .eq("id", id)
@@ -204,7 +204,7 @@
             const longitude = parseFloat(document.getElementById("edit-lng").value);
             const timestamp = document.getElementById("edit-datetime").value;
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from("person_tracking")
                 .update({ name, note, latitude, longitude, timestamp })
                 .eq("id", id);
@@ -219,7 +219,7 @@
 
         document.getElementById("delete-button").addEventListener("click", async function () {
             if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from("person_tracking")
                     .delete()
                     .eq("id", id);
