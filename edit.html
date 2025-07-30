@@ -200,9 +200,15 @@
 
             const name = document.getElementById("edit-name").value;
             const note = document.getElementById("edit-note").value;
-            const latitude = parseFloat(document.getElementById("edit-lat").value);
-            const longitude = parseFloat(document.getElementById("edit-lng").value);
+
+            const latitudeStr = document.getElementById("edit-lat").value.trim();
+            const longitudeStr = document.getElementById("edit-lng").value.trim();
+
+            const latitude = latitudeStr === "" ? null : parseFloat(latitudeStr);
+            const longitude = longitudeStr === "" ? null : parseFloat(longitudeStr);
             const timestamp = document.getElementById("edit-datetime").value;
+
+            console.log({ name, note, latitude, longitude, timestamp }); // debug log
 
             const { error } = await supabaseClient
                 .from("reports")
