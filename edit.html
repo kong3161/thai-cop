@@ -212,13 +212,14 @@
 
             console.log("Preparing to update:", { name, note, latitude, longitude, timestamp });
 
-            const { error } = await supabaseClient
+            const { data, error } = await supabaseClient
                 .from("reports")
                 .update({ name, note, latitude, longitude, timestamp })
-                .eq("id", id);
+                .eq("id", id)
+                .select();
 
-            if (error) {
-                alert("ไม่สามารถบันทึกข้อมูลได้: " + error.message);
+            if (error || !data || data.length === 0) {
+                alert("ไม่สามารถบันทึกข้อมูลได้: " + (error?.message || "ไม่พบข้อมูลที่ถูกอัปเดต"));
             } else {
                 alert("บันทึกข้อมูลเรียบร้อยแล้ว");
                 window.location.href = "records.html";
