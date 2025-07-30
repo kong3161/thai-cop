@@ -130,7 +130,6 @@ async function submitData() {
 
   const name = document.getElementById("name").value;
   const note = document.getElementById("note").value;
-  const gender = document.getElementById("gender").value;
   const approxAge = document.getElementById("approx_age").value;
   const appearance = document.getElementById("appearance").value;
   const condition = document.getElementById("condition").value;
@@ -158,7 +157,6 @@ async function submitData() {
       body: JSON.stringify({
         name,
         note,
-        gender,
         approx_age: parseInt(approxAge),
         appearance,
         condition,
