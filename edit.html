@@ -151,7 +151,19 @@
             document.getElementById("edit-note").value = data.note || "";
             document.getElementById("edit-lat").value = data.latitude || "";
             document.getElementById("edit-lng").value = data.longitude || "";
-            document.getElementById("edit-datetime").value = data.timestamp ? data.timestamp.split(".")[0] : "";
+            // Adjust timestamp parsing depending on Supabase format
+            if (data.timestamp) {
+                // If timestamp contains '+', e.g., '2024-06-20T13:15:00+00:00'
+                if (data.timestamp.includes("+")) {
+                    document.getElementById("edit-datetime").value = data.timestamp.split("+")[0];
+                } else if (data.timestamp.includes(".")) {
+                    document.getElementById("edit-datetime").value = data.timestamp.split(".")[0];
+                } else {
+                    document.getElementById("edit-datetime").value = data.timestamp;
+                }
+            } else {
+                document.getElementById("edit-datetime").value = "";
+            }
         }
 
         // ฟังก์ชันบันทึกข้อมูลใหม่
