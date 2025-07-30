@@ -218,8 +218,11 @@
                 .eq("id", id)
                 .select();
 
-            if (error || !data || data.length === 0) {
-                alert("ไม่สามารถบันทึกข้อมูลได้: " + (error?.message || "ไม่พบข้อมูลที่ถูกอัปเดต"));
+            if (error) {
+                alert("ไม่สามารถบันทึกข้อมูลได้: " + error.message);
+            } else if (!data || data.length === 0) {
+                alert("คำสั่งอัปเดตสำเร็จ แต่ไม่พบข้อมูลที่กลับมา (data.length = 0)");
+                console.log("อาจเกิดจาก Supabase RLS หรือ ID ไม่ตรง:", { id });
             } else {
                 alert("บันทึกข้อมูลเรียบร้อยแล้ว");
                 window.location.href = "records.html";
