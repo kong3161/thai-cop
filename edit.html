@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Anuphan', sans-serif;
+      }
+      h2 {
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .form-group label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+      }
+      a, span, button {
+        font-family: 'Anuphan', sans-serif;
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      input[type="text"],
+      input[type="datetime-local"],
+      textarea {
+        width: 100%;
+        max-width: 500px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        box-sizing: border-box;
+        font-family: 'Anuphan', sans-serif;
+      }
+      button.primary-button,
+      button.danger-button {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-right: 8px;
+        font-family: 'Anuphan', sans-serif;
+      }
+      button.primary-button {
+        background-color: #007bff;
+        color: white;
+      }
+      button.danger-button {
+        background-color: #dc3545;
+        color: white;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 16px;
+      }
+      .menu-links {
+        display: none;
+      }
+      @media (min-width: 768px) {
+        #menu-toggle {
+          display: none;
+        }
+        #dropdown-menu {
+          display: none !important;
+        }
+        .menu-links {
+          display: flex;
+          gap: 16px;
+        }
+      }
+    </style>
+</head>
+<body>
+    <div style="background-color: #e0f0ff; padding: 10px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center;">
+            <img src="LOGO.png" alt="Logo" style="height: 30px; margin-right: 8px;">
+            <span style="font-size: 18px; font-weight: bold; color: #004080; font-family: 'Anuphan', sans-serif;">ระบบติดตามบุคคล</span>
+        </div>
+        <div style="position: relative;">
+            <div class="menu-links">
+              <a href="index.html" style="text-decoration: none; color: #004080; font-weight: bold;">หน้าแรก</a>
+              <a href="records.html" style="text-decoration: none; color: #004080; font-weight: bold;">ข้อมูลที่เคยบันทึก</a>
+            </div>
+            <button id="menu-toggle" style="background: none; border: none; font-size: 24px; cursor: pointer;">☰</button>
+            <div id="dropdown-menu" style="display: none; position: absolute; right: 0; background-color: #ffffff; border: 1px solid #ccc; border-radius: 6px; padding: 8px;">
+                <a href="index.html" style="display: block; text-decoration: none; color: #004080; margin-bottom: 8px;">หน้าแรก</a>
+                <a href="records.html" style="display: block; text-decoration: none; color: #004080;">ข้อมูลที่เคยบันทึก</a>
+            </div>
+        </div>
+    </div>
+    <h2 style="text-align: center; margin: 16px 0; font-size: 20px;">แก้ไขข้อมูล</h2>
+    <div class="container">
+        <form id="edit-form">
+            <input type="hidden" id="record-id">
+            <div class="form-group">
+                <label for="edit-note">รายละเอียด:</label>
+                <textarea id="edit-note" rows="4" cols="50"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="edit-lat">ละติจูด:</label>
+                <input type="text" id="edit-lat">
+            </div>
+            <div class="form-group">
+                <label for="edit-lng">ลองจิจูด:</label>
+                <input type="text" id="edit-lng">
+            </div>
+            <div class="form-group">
+                <label for="edit-datetime">วันเวลา:</label>
+                <input type="datetime-local" id="edit-datetime">
+            </div>
+            <button class="primary-button" type="submit">บันทึก</button>
+            <button class="danger-button" type="button" id="delete-button">ลบข้อมูล</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        // ดึง id จาก URL
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        document.getElementById("record-id").value = id;
+
+        const SUPABASE_URL = "https://ntxrmhzrxorufzjvejch.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eHJtaHpyeG9ydWZ6anZlamNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3OTI2NDUsImV4cCI6MjA2NTM2ODY0NX0.xS0LA1ZGVZ_Lq0e-QjTyYCS9NHy5m4t0jbeDvXpKuSE";
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ฟังก์ชันโหลดข้อมูลเดิม
+        async function fetchSupabaseRecord(id) {
+            const { data, error } = await supabase
+                .from("person_tracking")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (error) {
+                alert("ไม่สามารถโหลดข้อมูลได้");
+                return;
+            }
+
+            console.log("โหลดข้อมูลสำเร็จ:", data); // เพิ่มบรรทัดนี้
+
+            document.getElementById("edit-note").value = data.note || "";
+            document.getElementById("edit-lat").value = data.latitude || "";
+            document.getElementById("edit-lng").value = data.longitude || "";
+            document.getElementById("edit-datetime").value = data.timestamp ? data.timestamp.split(".")[0] : "";
+        }
+
+        // ฟังก์ชันบันทึกข้อมูลใหม่
+        document.getElementById("edit-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const note = document.getElementById("edit-note").value;
+            const latitude = parseFloat(document.getElementById("edit-lat").value);
+            const longitude = parseFloat(document.getElementById("edit-lng").value);
+            const timestamp = document.getElementById("edit-datetime").value;
+
+            const { error } = await supabase
+                .from("person_tracking")
+                .update({ note, latitude, longitude, timestamp })
+                .eq("id", id);
+
+            if (error) {
+                alert("ไม่สามารถบันทึกข้อมูลได้");
+            } else {
+                alert("บันทึกข้อมูลเรียบร้อยแล้ว");
+                window.location.href = "records.html";
+            }
+        });
+
+        fetchSupabaseRecord(id);
+
+        document.getElementById("delete-button").addEventListener("click", async function () {
+            if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) {
+                const { error } = await supabase
+                    .from("person_tracking")
+                    .delete()
+                    .eq("id", id);
+
+                if (error) {
+                    alert("ไม่สามารถลบข้อมูลได้");
+                } else {
+                    alert("ลบข้อมูลเรียบร้อยแล้ว");
+                    window.location.href = "records.html";
+                }
+            }
+        });
+    // เมนู toggle
+    document.getElementById("menu-toggle").addEventListener("click", function () {
+        const menu = document.getElementById("dropdown-menu");
+        menu.style.display = menu.style.display === "none" ? "block" : "none";
+    });
+    </script>
+</body>
+</html>

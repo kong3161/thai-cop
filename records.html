@@ -184,6 +184,7 @@
           <th style="padding: 0.5rem; border: 1px solid #ccc; width: 50%;">รายละเอียด</th>
           <th style="padding: 0.5rem; border: 1px solid #ccc;">รูปภาพ</th>
           <th style="padding: 0.5rem; border: 1px solid #ccc;">รายละเอียดบุคคล</th>
+          <th style="padding: 0.5rem; border: 1px solid #ccc;">การจัดการ</th>
         </tr>
       </thead>
       <tbody id="records-body"></tbody>
@@ -217,6 +218,10 @@
     let allMarkers = [];
     let markerMap = {};
     let map;
+
+    function editRecord(id) {
+      window.location.href = `edit.html?id=${id}`;
+    }
 
     async function loadReports() {
       allMarkers = [];
@@ -265,6 +270,10 @@
           </td>
           <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">
             <a href="person.html?person_code=${report.person_code}" style="color: #007bff; text-decoration: none;">รายละเอียด</a>
+          </td>
+          <td style="padding: 0.5rem; text-align: center; border: 1px solid #ccc;">
+            <button onclick="editRecord('${report.id}')" style="font-size: 0.8rem; padding: 0.2rem 0.5rem;">แก้ไข</button>
+            <button onclick="deleteRecord('${report.id}')" style="font-size: 0.8rem; padding: 0.2rem 0.5rem; background-color: #dc3545; color: white;">ลบ</button>
           </td>
         `;
         tbody.appendChild(row);

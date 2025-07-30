@@ -26,6 +26,11 @@ async function startCamera() {
   }
 }
 
+// ฟังก์ชันสำหรับแก้ไขข้อมูล
+function editRecord(id) {
+  window.location.href = `edit.html?id=${id}`;
+}
+
 async function generatePersonCode() {
   const res = await fetch("https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports?select=person_code", {
     headers: {
@@ -218,4 +223,27 @@ function refreshLocation() {
 const refreshBtn = document.getElementById("refresh-location");
 if (refreshBtn) {
   refreshBtn.addEventListener("click", refreshLocation);
+}
+
+// ลบข้อมูลจาก Supabase ตาม id
+async function deleteRecord(id) {
+  if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) return;
+
+  try {
+    const response = await fetch(`https://alqdcyxbxmhotkyzicgv.supabase.co/rest/v1/reports?id=eq.${id}`, {
+      method: "DELETE",
+      headers: {
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFscWRjeXhieG1ob3RreXppY2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzQ3MTgsImV4cCI6MjA2OTExMDcxOH0.9OZIc6YMlcOvd85y7gwZdi7Pqn5f_1SdIJ7YI20beSU"
+      }
+    });
+
+    if (!response.ok) throw new Error("เกิดข้อผิดพลาดในการลบข้อมูล");
+
+    alert("🗑️ ลบข้อมูลเรียบร้อยแล้ว");
+    location.reload();
+  } catch (error) {
+    alert("เกิดข้อผิดพลาด: " + error.message);
+    console.error("Delete error:", error);
+  }
 }
