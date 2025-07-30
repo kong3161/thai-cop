@@ -160,13 +160,9 @@
             document.getElementById("edit-lat").value = data.latitude || "";
             document.getElementById("edit-lng").value = data.longitude || "";
             if (data.timestamp) {
-                if (data.timestamp.includes("+")) {
-                    document.getElementById("edit-datetime").value = data.timestamp.split("+")[0];
-                } else if (data.timestamp.includes(".")) {
-                    document.getElementById("edit-datetime").value = data.timestamp.split(".")[0];
-                } else {
-                    document.getElementById("edit-datetime").value = data.timestamp;
-                }
+                const utcDate = new Date(data.timestamp);
+                const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000); // ปรับ timezone
+                document.getElementById("edit-datetime").value = localDate.toISOString().slice(0, 16); // ISO string แบบ yyyy-MM-ddTHH:mm
             } else {
                 document.getElementById("edit-datetime").value = "";
             }
