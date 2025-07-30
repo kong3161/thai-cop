@@ -25,38 +25,12 @@
         margin-bottom: 16px;
       }
 
-      /* Flex form label alignment */
-      .form-group {
-        display: flex;
-        align-items: center;
-      }
-      .form-group label {
-        min-width: 120px;
-        margin-right: 12px;
-        text-align: right;
-      }
       @media (max-width: 600px) {
-        .form-group {
-          flex-direction: column;
-          align-items: flex-start;
-          width: 100%;
-        }
-        .form-group label {
-          text-align: left;
-          margin-bottom: 4px;
-        }
         input[type="text"],
         input[type="datetime-local"],
         textarea {
           width: 100% !important;
           max-width: 100% !important;
-        }
-        .form-group input,
-        .form-group textarea {
-          width: 100%;
-        }
-        .form-group {
-          width: 100%;
         }
         .button-row {
           flex-direction: column;
@@ -179,26 +153,22 @@
     <div class="container">
         <form id="edit-form">
             <input type="hidden" id="record-id">
-            <div class="form-group">
-                <label for="edit-name">ชื่อ:</label>
-                <input type="text" id="edit-name">
-            </div>
-            <div class="form-group">
-                <label for="edit-note">รายละเอียด:</label>
-                <textarea id="edit-note" rows="4" cols="50"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="edit-lat">ละติจูด:</label>
-                <input type="text" id="edit-lat">
-            </div>
-            <div class="form-group">
-                <label for="edit-lng">ลองจิจูด:</label>
-                <input type="text" id="edit-lng">
-            </div>
-            <div class="form-group">
-                <label for="edit-datetime">วันเวลา:</label>
-                <input type="datetime-local" id="edit-datetime">
-            </div>
+
+            <label for="edit-name">ชื่อ:</label>
+            <input type="text" id="edit-name">
+
+            <label for="edit-note">รายละเอียด:</label>
+            <textarea id="edit-note" rows="4" cols="50"></textarea>
+
+            <label for="edit-lat">ละติจูด:</label>
+            <input type="text" id="edit-lat">
+
+            <label for="edit-lng">ลองจิจูด:</label>
+            <input type="text" id="edit-lng">
+
+            <label for="edit-datetime">วันเวลา:</label>
+            <input type="datetime-local" id="edit-datetime">
+
             <div class="button-container">
               <div class="button-row">
                 <button class="primary-button" type="submit">บันทึก</button>
