@@ -121,6 +121,10 @@
         <form id="edit-form">
             <input type="hidden" id="record-id">
             <div class="form-group">
+                <label for="edit-name">ชื่อ:</label>
+                <input type="text" id="edit-name">
+            </div>
+            <div class="form-group">
                 <label for="edit-note">รายละเอียด:</label>
                 <textarea id="edit-note" rows="4" cols="50"></textarea>
             </div>
@@ -158,7 +162,7 @@
         async function fetchSupabaseRecord(id) {
             const { data, error } = await supabase
                 .from("person_tracking")
-                .select("id, note, latitude, longitude, timestamp")
+                .select("id, name, note, latitude, longitude, timestamp")
                 .eq("id", id)
                 .maybeSingle();  // ป้องกัน crash หากไม่มีข้อมูล
 
@@ -175,6 +179,7 @@
 
             console.log("โหลดข้อมูลสำเร็จ:", data);
 
+            document.getElementById("edit-name").value = data.name || "";
             document.getElementById("edit-note").value = data.note || "";
             document.getElementById("edit-lat").value = data.latitude ?? "";
             document.getElementById("edit-lng").value = data.longitude ?? "";
@@ -193,6 +198,7 @@
         document.getElementById("edit-form").addEventListener("submit", async function (e) {
             e.preventDefault();
 
+            const name = document.getElementById("edit-name").value;
             const note = document.getElementById("edit-note").value;
             const latitude = parseFloat(document.getElementById("edit-lat").value);
             const longitude = parseFloat(document.getElementById("edit-lng").value);
@@ -200,7 +206,7 @@
 
             const { error } = await supabase
                 .from("person_tracking")
-                .update({ note, latitude, longitude, timestamp })
+                .update({ name, note, latitude, longitude, timestamp })
                 .eq("id", id);
 
             if (error) {
