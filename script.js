@@ -130,8 +130,6 @@ async function submitData() {
 
   const name = document.getElementById("name").value;
   const note = document.getElementById("note").value;
-  const appearance = document.getElementById("appearance").value;
-  const condition = document.getElementById("condition").value;
   const timestamp = new Date().toISOString();
 
   if (!latitude || !longitude) {
@@ -156,8 +154,6 @@ async function submitData() {
       body: JSON.stringify({
         name,
         note,
-        appearance,
-        condition,
         latitude,
         longitude,
         timestamp,
