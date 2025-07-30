@@ -126,6 +126,7 @@
         // ดึง id จาก URL
         const params = new URLSearchParams(window.location.search);
         const id = params.get("id");
+        console.log("Fetching record for id:", id);
         document.getElementById("record-id").value = id;
 
         const SUPABASE_URL = "https://ntxrmhzrxorufzjvejch.supabase.co";
@@ -142,18 +143,23 @@
                 .single();
 
             if (error) {
+                console.error("ไม่สามารถโหลดข้อมูลได้:", error.message);
                 alert("ไม่สามารถโหลดข้อมูลได้");
                 return;
             }
 
-            console.log("โหลดข้อมูลสำเร็จ:", data); // เพิ่มบรรทัดนี้
+            if (!data) {
+                console.error("ไม่พบข้อมูลของ id:", id);
+                alert("ไม่พบข้อมูล");
+                return;
+            }
+
+            console.log("โหลดข้อมูลสำเร็จ:", data);
 
             document.getElementById("edit-note").value = data.note || "";
             document.getElementById("edit-lat").value = data.latitude || "";
             document.getElementById("edit-lng").value = data.longitude || "";
-            // Adjust timestamp parsing depending on Supabase format
             if (data.timestamp) {
-                // If timestamp contains '+', e.g., '2024-06-20T13:15:00+00:00'
                 if (data.timestamp.includes("+")) {
                     document.getElementById("edit-datetime").value = data.timestamp.split("+")[0];
                 } else if (data.timestamp.includes(".")) {
@@ -165,6 +171,8 @@
                 document.getElementById("edit-datetime").value = "";
             }
         }
+
+        fetchSupabaseRecord(id);
 
         // ฟังก์ชันบันทึกข้อมูลใหม่
         document.getElementById("edit-form").addEventListener("submit", async function (e) {
@@ -187,8 +195,6 @@
                 window.location.href = "records.html";
             }
         });
-
-        fetchSupabaseRecord(id);
 
         document.getElementById("delete-button").addEventListener("click", async function () {
             if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) {
