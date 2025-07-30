@@ -263,13 +263,15 @@
           headers: {
             apikey: supabaseKey,
             Authorization: `Bearer ${supabaseKey}`,
+            "Prefer": "return=representation"
           },
         });
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error("Error deleting record:", errorText);
-          alert("❌ ลบข้อมูลไม่สำเร็จ: " + errorText);
+        const deletedData = await res.json();
+
+        if (!res.ok || deletedData.length === 0) {
+          console.error("Error deleting record:", deletedData);
+          alert("❌ ลบข้อมูลไม่สำเร็จ หรือไม่พบข้อมูลที่จะลบ");
           return;
         }
 
