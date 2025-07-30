@@ -161,7 +161,7 @@
         // ฟังก์ชันโหลดข้อมูลเดิม
         async function fetchSupabaseRecord(id) {
             const { data, error } = await supabaseClient
-                .from("person_tracking")
+                .from("reports")
                 .select("id, name, note, latitude, longitude, timestamp")
                 .eq("id", id)
                 .single();  // ใช้ .single() เพื่อ error ชัดเจนขึ้น
@@ -205,7 +205,7 @@
             const timestamp = document.getElementById("edit-datetime").value;
 
             const { error } = await supabaseClient
-                .from("person_tracking")
+                .from("reports")
                 .update({ name, note, latitude, longitude, timestamp })
                 .eq("id", id);
 
@@ -220,7 +220,7 @@
         document.getElementById("delete-button").addEventListener("click", async function () {
             if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) {
                 const { error } = await supabaseClient
-                    .from("person_tracking")
+                    .from("reports")
                     .delete()
                     .eq("id", id);
 
