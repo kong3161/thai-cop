@@ -204,11 +204,13 @@
             const latitudeStr = document.getElementById("edit-lat").value.trim();
             const longitudeStr = document.getElementById("edit-lng").value.trim();
 
-            const latitude = latitudeStr === "" ? null : parseFloat(latitudeStr);
-            const longitude = longitudeStr === "" ? null : parseFloat(longitudeStr);
-            const timestamp = document.getElementById("edit-datetime").value;
+            const latitude = isNaN(parseFloat(latitudeStr)) ? null : parseFloat(latitudeStr);
+            const longitude = isNaN(parseFloat(longitudeStr)) ? null : parseFloat(longitudeStr);
 
-            console.log({ name, note, latitude, longitude, timestamp }); // debug log
+            const timestampInput = document.getElementById("edit-datetime").value;
+            const timestamp = timestampInput ? new Date(timestampInput).toISOString() : null;
+
+            console.log("Preparing to update:", { name, note, latitude, longitude, timestamp });
 
             const { error } = await supabaseClient
                 .from("reports")
@@ -216,7 +218,7 @@
                 .eq("id", id);
 
             if (error) {
-                alert("ไม่สามารถบันทึกข้อมูลได้");
+                alert("ไม่สามารถบันทึกข้อมูลได้: " + error.message);
             } else {
                 alert("บันทึกข้อมูลเรียบร้อยแล้ว");
                 window.location.href = "records.html";
